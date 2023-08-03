@@ -1,8 +1,12 @@
+//--------------------------------------------------------------------------------------
+//---------------------------------- 設定區 ---------------------------------------------
+//--------------------------------------------------------------------------------------
 // 載入 express 並建構應用程式伺服器
 const express = require('express')
 const exphbs = require('express-handlebars')
 const mongoose = require('mongoose') // 載入 mongoose
 const Todo = require('./models/todo')
+const bodyParser = require('body-parser')
 
 // 加入這段 code, 僅在非正式環境時, 使用 dotenv
 if (process.env.NODE_ENV !== 'production') {
@@ -28,16 +32,44 @@ db.once('open', () => {
 
 app.engine('hbs', exphbs.engine({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
-
+app.use(bodyParser.urlencoded({ extended: true }))
+//--------------------------------------------------------------------------------------
+//---------------------------------- 路由區 ---------------------------------------------
+//--------------------------------------------------------------------------------------
 // 設定首頁路由
 app.get('/', (req, res) => {
-  // console.log(Todo.find().lean())
-  Todo.find()
-    .lean()
+  Todo.find() //跟js的Array.prototype.find()意思不同
+    .lean() //這也是mongoose方法
     .then((todos) => res.render('index', { todos }))
     .catch((error) => console.error(error))
 })
 
+app.get('/todos/new', (req, res) => {
+  return res.render('new')
+})
+
+// Create 功能：資料庫新增資料
+
+// 作法1
+// app.post('/todos', (req, res) => {
+//   const name = req.body.name // 從 req.body 拿出表單裡的 name 資料
+//   return Todo.create({ name }) // 存入資料庫
+//     .then(() => res.redirect('/')) // 新增完成後導回首頁
+//     .catch((error) => console.log(error))
+// })
+// 作法2
+app.post('/todos', (req, res) => {
+  const name = req.body.name
+  const todo = new Todo({ name })
+  console.log(name)
+  return todo
+    .save() // 存入資料庫
+    .then(() => res.redirect('/')) // 新增完成後導回首頁
+    .catch((error) => console.log(error))
+})
+//--------------------------------------------------------------------------------------
+//----------------------------------- 啟動  ---------------------------------------------
+//--------------------------------------------------------------------------------------
 // 設定 port 3000
 app.listen(3000, () => {
   console.log('App is running on http://localhost:3000')
