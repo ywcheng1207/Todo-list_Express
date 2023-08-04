@@ -7,6 +7,7 @@ const exphbs = require('express-handlebars')
 const mongoose = require('mongoose') // 載入 mongoose
 const Todo = require('./models/todo')
 const bodyParser = require('body-parser')
+const methodOverride = require('method-override')
 
 // 加入這段 code, 僅在非正式環境時, 使用 dotenv
 if (process.env.NODE_ENV !== 'production') {
@@ -33,6 +34,7 @@ db.once('open', () => {
 app.engine('hbs', exphbs.engine({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(methodOverride('_method'))
 // --------------------------------------------------------------------------------------
 // ---------------------------------- 路由區 ---------------------------------------------
 // --------------------------------------------------------------------------------------
@@ -84,7 +86,7 @@ app.get('/todos/:id/edit', (req, res) => {
     .then((todo) => res.render('edit', { todo }))
     .catch((error) => console.log(error))
 })
-app.post('/todos/:id/edit', (req, res) => {
+app.put('/todos/:id', (req, res) => {
   const id = req.params.id
   const { name, isDone } = req.body
   return Todo.findById(id)
@@ -97,7 +99,7 @@ app.post('/todos/:id/edit', (req, res) => {
     .catch((error) => console.log(error))
 })
 // Delete
-app.post('/todos/:id/delete', (req, res) => {
+app.delete('/todos/:id', (req, res) => {
   const id = req.params.id
   return Todo.findById(id)
     .then((todo) => todo.remove())
