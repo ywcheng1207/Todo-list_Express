@@ -40,6 +40,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.get('/', (req, res) => {
   Todo.find() // 跟js的Array.prototype.find()意思不同
     .lean() // 這也是mongoose方法
+    .sort({ _id: 'asc' })
     .then((todos) => res.render('index', { todos }))
     .catch((error) => console.error(error))
 })
