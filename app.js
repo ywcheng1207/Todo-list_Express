@@ -8,6 +8,7 @@ const bodyParser = require('body-parser')
 const methodOverride = require('method-override')
 const routes = require('./routes') // 對Express來說，等同./reoutes/index.js
 require('./config/mongoose')
+const port = process.env.PORT || 3000
 // --------------------------------------------------------------------------------------
 // ---------------------------------- use區 ---------------------------------------------
 // --------------------------------------------------------------------------------------
@@ -22,6 +23,6 @@ app.use(routes)
 // ----------------------------------- 啟動  ---------------------------------------------
 // --------------------------------------------------------------------------------------
 // 設定 port 3000
-app.listen(3000, () => {
+app.listen(port, () => {
   console.log('App is running on http://localhost:3000')
 })
