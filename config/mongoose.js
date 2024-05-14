@@ -5,8 +5,11 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 mongoose.connect(process.env.MONGODB_URI, {
+  // Mongoose 6 以上已預設 useNewUrlParser 、useUnifiedTopology、useCreateIndex為 true
+  // 若沒有出現 DeprecationWarning 則可以跳過這個步驟
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  useCreateIndex: true
 }) // 設定連線到 mongoDB
 
 // 取得資料庫連線狀態
